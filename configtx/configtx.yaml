@@ -1,0 +1,240 @@
+Organizations:
+  - &OrdererOrg
+    Name: Orderer
+    ID: OrdererMSP
+    MSPDir: /etc/hyperledger/crypto-config/ordererOrganizations/example.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('OrdererMSP.admin')"
+    OrdererEndpoints:
+      - "orderer.example.com:7050"
+
+  - &Org1
+    Name: Org1
+    ID: Org1MSP
+    MSPDir: /etc/hyperledger/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('Org1MSP.admin', 'Org1MSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('Org1MSP.admin')"
+    AnchorPeers:
+      - Host: peer0.org1.example.com
+        Port: 7051
+
+  - &Org2
+    Name: Org2
+    ID: Org2MSP
+    MSPDir: /etc/hyperledger/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('Org2MSP.admin', 'Org2MSP.peer', 'Org2MSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('Org2MSP.admin', 'Org2MSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('Org2MSP.admin')"
+    AnchorPeers:
+      - Host: peer0.org2.example.com
+        Port: 7051
+
+  - &Org3
+    Name: Org3
+    ID: Org3MSP
+    MSPDir: /etc/hyperledger/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('Org3MSP.admin', 'Org3MSP.peer', 'Org3MSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('Org3MSP.admin', 'Org3MSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('Org3MSP.admin')"
+    AnchorPeers:
+      - Host: peer0.org3.example.com
+        Port: 7051
+
+  - &Org4
+    Name: Org4
+    ID: Org4MSP
+    MSPDir: /etc/hyperledger/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('Org4MSP.admin', 'Org4MSP.peer', 'Org4MSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('Org4MSP.admin', 'Org4MSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('Org4MSP.admin')"
+    AnchorPeers:
+      - Host: peer0.org4.example.com
+        Port: 7051
+
+  - &Org5
+    Name: Org5
+    ID: Org5MSP
+    MSPDir: /etc/hyperledger/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('Org5MSP.admin', 'Org5MSP.peer', 'Org5MSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('Org5MSP.admin', 'Org5MSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('Org5MSP.admin')"
+    AnchorPeers:
+      - Host: peer0.org5.example.com
+        Port: 7051
+
+Capabilities:
+  Channel: &ChannelCapabilities
+    V2_0: true
+
+  Orderer: &OrdererCapabilities
+    V2_0: true
+  
+  Application: &ApplicationCapabilities
+    V2_0: true
+
+Application: &ApplicationDefaults
+    Policies: &ApplicationDefaultPolicies
+      Readers:
+        Type: ImplicitMeta
+        Rule: "ANY Readers"
+      Writers:
+        Type: ImplicitMeta
+        Rule: "ANY Writers"
+      Admins:
+        Type: ImplicitMeta
+        Rule: "MAJORITY Admins"
+      LifecycleEndorsement:
+        Type: ImplicitMeta
+        Rule: "ANY Readers"
+      Endorsement:
+        Type: ImplicitMeta
+        Rule: "ANY Writers"
+    Organizations:
+    Capabilities:
+        <<: *ApplicationCapabilities
+             
+Channel: &ChannelDefaults
+  Policies: 
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    ChannelCreation:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+  Capabilities:
+    <<: *ChannelCapabilities
+        
+
+Orderer: &OrdererDefaults
+  OrdererType: etcdraft
+  Addresses:
+    - orderer.example.com:7050
+  BatchTimeout: 1s
+  BatchSize:
+    MaxMessageCount: 30
+    AbsoluteMaxBytes: 99MB
+    PreferredMaxBytes: 512KB
+  EtcdRaft:
+    Consenters:
+      - Host: orderer.example.com
+        Port: 7050
+        ClientTLSCert: /etc/hyperledger/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+        ServerTLSCert: /etc/hyperledger/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+      - Host: orderer0.example.com
+        Port: 7050
+        ClientTLSCert: /etc/hyperledger/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+        ServerTLSCert: /etc/hyperledger/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+      - Host: orderer1.example.com
+        Port: 7050
+        ClientTLSCert: /etc/hyperledger/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+        ServerTLSCert: /etc/hyperledger/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+  Organizations: 
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+  Capabilities:
+    <<: *OrdererCapabilities
+
+Profiles:
+  ExampleGenesis:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *Org1
+        - *Org2
+        - *Org3
+        - *Org4
+        - *Org5
+      Capabilities:
+        <<: *OrdererCapabilities
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *Org1
+        - *Org2
+        - *Org3
+        - *Org4
+        - *Org5
+    Consortiums:
+      SampleConsortium:
+        Organizations:
+          - *Org1
+          - *Org2
+          - *Org3
+          - *Org4
+          - *Org5
+
+  example-channel:
+    Consortium: SampleConsortium
+    <<: *ApplicationDefaults
+    Application:
+      <<: *ApplicationDefaults
+      Capabilities:
+        <<: *ApplicationCapabilities 
+      Organizations:
+        - *Org1
+        - *Org2
+        - *Org3
+        - *Org4
+        - *Org5
